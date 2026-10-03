@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=9e49afcc-643a-41f5-9b1b-ab09d4dd6cde
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>استعلام کد صحت</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .header {
+            background-color: #1a365d;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header .logo-text {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .header a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .form-row {
+            margin-bottom: 20px;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .text-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            background-color: #fafafa;
+        }
+        .radio-group {
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        .radio-group label {
+            display: inline;
+            font-weight: normal;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .captcha-box {
+            background: #e2e8f0;
+            color: #1a202c;
+            padding: 8px 20px;
+            font-family: monospace;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            user-select: none;
+            border-radius: 4px;
+            border: 1px solid #cbd5e0;
+        }
+        .refresh-icon {
+            cursor: pointer;
+            font-size: 18px;
+            color: #4a5568;
+        }
+        .btn-submit {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Tahoma;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #2b6cb0;
+        }
+        #pdf-section {
+            display: none;
+        }
+        iframe {
+            width: 100%;
+            height: 650px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .action-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .back-btn {
+            background-color: #718096;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Tahoma;
+        }
+        .print-btn {
+            background-color: #38a169;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Tahoma;
+        }
+        .print-btn:hover {
+            background-color: #2f855a;
+        }
+        .back-btn:hover {
+            background-color: #4a5568;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #718096;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        /* تنظیمات اختصاصی برای پرینت گرفتن تمیز */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #pdf-section, #pdf-section * {
+                visibility: visible;
+            }
+            #pdf-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .action-buttons {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-text">سازمان امور دانشجویان - سامانه سجاد</div>
+        <div>
+            <a href="https://portal.saorg.ir/" target="_blank">صفحه اصلی پورتال</a>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div id="form-card" class="card">
+            <div class="card-title">استعلام کد صحت مدرک تحصیلی</div>
+            
+            <form id="inquiry-form">
+                <div class="form-row">
+                    <label>کد صحت <span style="color: red;">*</span></label>
+                    <input type="text" id="txtValidityCode" class="text-input" value="13964386564259769666" readonly>
+                </div>
+
+                <div class="form-row">
+                    <label>لطفا یکی از گزینه های زیر را انتخاب کنید:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="opt1" name="inquiryType" checked>
+                        <label for="opt1">استعلام کد صحت مدرک تحصیلی</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="opt2" name="inquiryType">
+                        <label for="opt2">دریافت تاییدیه تحصیلی جهت ارائه سازمان ها، شرکت یا دانشگاه</label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>لطفا مقدار کد امنیتی زیر را وارد نمایید:</label>
+                    <div class="captcha-container">
+                        <div class="captcha-box" id="captcha-display">9F4e2</div>
+                        <span class="refresh-icon" onclick="refreshCaptcha()" title="تغییر کد امنیتی">↻</span>
+                    </div>
+                    <input type="text" id="captcha-input" class="text-input" style="max-width: 200px;" placeholder="عبارت امنیتی" required>
+                </div>
+
+                <button type="submit" class="btn-submit">استعلام</button>
+            </form>
+        </div>
+
+        <div id="pdf-section" class="card">
+            <div class="card-title">نتیجه استعلام - تاییدیه تحصیلی</div>
+            <iframe src="certificate.pdf"></iframe>
+            <div class="action-buttons">
+                <button class="print-btn" onclick="window.print()">چاپ مدرک / PDF</button>
+                <button class="back-btn" onclick="resetForm()">بازگشت به صفحه استعلام</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        اطلاعات تماس وب‌سایت سازمان: www.saorg.ir
+    </footer>
+
+    <script>
+        function refreshCaptcha() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = "";
+            for (let i = 0; i < 5; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('captcha-display').innerText = result;
+        }
+
+        document.getElementById('inquiry-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const captchaInput = document.getElementById('captcha-input').value.trim();
+            
+            if(captchaInput !== "") {
+                document.getElementById('form-card').style.display = 'none';
+                document.getElementById('pdf-section').style.display = 'block';
+            } else {
+                alert("لطفاً عبارت امنیتی را وارد کنید.");
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('pdf-section').style.display = 'none';
+            document.getElementById('form-card').style.display = 'block';
+            document.getElementById('captcha-input').value = '';
+            refreshCaptcha();
+        }
+    </script>
+
+</body>
+</html><script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="9e49afcc-643a-41f5-9b1b-ab09d4dd6cde" data-app-host="app.netlify.com"></script>
